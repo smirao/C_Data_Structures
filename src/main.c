@@ -71,7 +71,7 @@ int main() {
    /*-------
     # Queue #
     -------*/
-    space();
+    /*space();
 
     Queue* intQueue = newQueue(10);
 
@@ -94,7 +94,10 @@ int main() {
     int peeked = (int)Qpeek(intQueue);
 
     printf("Is Empty: %s\nIs Full: %s\nPeeked: %d\n", isEmpty ? "true" : "false", isFull ? "true" : "false", peeked);
+    */
 
+
+   
 
     return 0;
 }
