@@ -27,6 +27,7 @@ void LLpop(struct LinkedListStruct* list){
             list -> endNode -> previousNode -> nextNode = NULL;
             list -> endNode = list -> endNode -> previousNode;
             list -> numOfNodes--;
+
             free(toBeFreed);
         }
         
@@ -34,6 +35,7 @@ void LLpop(struct LinkedListStruct* list){
 }
 
 void LLappend(struct LinkedListStruct* list, long long value){
+
     if (list -> numOfNodes == 0) {
         struct LLnode* firstNode = (struct LLnode*)malloc(sizeof(struct LLnode));
         firstNode -> nextNode = NULL;
@@ -55,9 +57,57 @@ void LLappend(struct LinkedListStruct* list, long long value){
     }
 }
 
+void LLpopFront(struct LinkedListStruct* list){
+    //Execute as long as elements exist
+    if (list -> numOfNodes != 0){
+        if (list -> numOfNodes >= 2){
+            //get ptr to last node then set next node's previousNode ptr to NULL
+            //also set LinkedList struct endNode ptr to the previous node's ptr
+            struct LLnode* toBeFreed = list -> startNode;
+            list -> startNode -> nextNode -> previousNode = NULL;
+            list -> startNode = list -> startNode -> nextNode;
+            list -> numOfNodes--;
+            free(toBeFreed);
+        } else {
+            free(list -> endNode);
+            list -> startNode = NULL;
+            list -> endNode = NULL;
+            list -> numOfNodes--;
+        }
+    }
+}
+
+void LLappendFront(struct LinkedListStruct* list, long long value){
+
+    if (list -> numOfNodes == 0) {
+        struct LLnode* firstNode = (struct LLnode*)malloc(sizeof(struct LLnode));
+        firstNode -> nextNode = NULL;
+        firstNode -> previousNode = NULL;
+        firstNode -> value = value;
+
+        list -> numOfNodes++;
+        list -> startNode = firstNode;
+        list -> endNode = firstNode;
+    } else {
+        printf("gee\n");
+        struct LLnode* newNode = (struct LLnode*)malloc(sizeof(struct LLnode));
+        newNode -> previousNode = NULL;
+        newNode -> nextNode = list -> startNode;
+        list -> startNode -> nextNode -> previousNode = newNode;
+        newNode -> value = value;
+
+        list -> numOfNodes++;
+        list -> startNode = newNode;
+    }
+}
+
 void LLinsert(struct LinkedListStruct* list, int index, long long value){
     struct LLnode* currentNode;
-    if (index != list -> numOfNodes){
+    if (index == 0){
+        LLappendFront(list, value);
+    } else if (index == list -> numOfNodes - 1){
+        LLappend(list, value);
+    } else if (index != list -> numOfNodes){
         if (list -> numOfNodes / 2 >= index && index >= 0){
             currentNode = list -> startNode;
 
@@ -81,15 +131,18 @@ void LLinsert(struct LinkedListStruct* list, int index, long long value){
         currentNode -> previousNode -> nextNode = newNode;
         currentNode -> previousNode = newNode;
         list -> numOfNodes++;
-    } else if (index == list -> numOfNodes){
-        LLappend(list, value);
     }
 }
 
 void LLremoveIndex(struct LinkedListStruct* list, int index) {
     struct LLnode* currentNode;
-
-    if (list -> numOfNodes / 2 >= index && index >= 0){
+    
+    if (index == 0){
+        LLpopFront(list);
+    } else if (index == list -> numOfNodes - 1){
+        LLpop(list);
+    } else {
+        if (list -> numOfNodes / 2 >= index && index >= 0){
             currentNode = list -> startNode;
 
             for (int i = 0; i < index; i++){
@@ -109,6 +162,7 @@ void LLremoveIndex(struct LinkedListStruct* list, int index) {
         currentNode -> previousNode -> nextNode = currentNode -> nextNode;
         currentNode -> nextNode -> previousNode = currentNode;
         list -> numOfNodes--;
+    }
 }
 
 long long LLvalueAt(struct LinkedListStruct* list, int index){
@@ -120,12 +174,12 @@ long long LLvalueAt(struct LinkedListStruct* list, int index){
         }
         return currentNode -> value;
     } else if (list -> numOfNodes / 2 <= index && index <= list -> numOfNodes - 1){
-
         struct LLnode* currentNode = list -> endNode;
 
         for (int i = list -> numOfNodes - 1; i > index; i--){
             currentNode = currentNode -> previousNode;
         }
+
         return currentNode -> value;
     }
     return -1;
